@@ -11,11 +11,6 @@ cos_df = pd.read_pickle("cos_5000rows.pkl")
 def home():
 	return render_template("index.html", content='hello')
 
-@app.route("/api")
-def api():
-	books = {620: 'Animal Farm', 241961: 'My Family and Other Animals', 523886: 'Exercitatio Anatomica de Motu Cordis et Sanguinis in Animalibus', 632999: 'Animal World', 2066549: 'Animal Dreams', 3765583: 'The Dying Animal', 8206943: 'The Animals of Farthing Wood', 11431117: 'The Moral Animal', 16629981: 'The Animal Family', 17392692: 'Pack Animals', 21760308: 'Animal Spirits: How Human Psychology Drives the Economy, and Why It Matters for Global Capitalism', 31324723: 'The God of Animals'}
-
-	return jsonify(books)
 
 @app.route("/search", methods=['GET'])
 def search():
