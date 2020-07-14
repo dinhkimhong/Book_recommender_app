@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/jquery-ui.css') }}">    
+    <title>Book Recommender System</title>
+    <style type="text/css">
+      .main_page{
+        min-height: 100vh;
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url({{ url_for('static',filename='img/book_img.jpg') }}) center/cover fixed no-repeat;
+      }
+
+      .log_in_form{
+        background-color: rgba(0, 0, 0, 0.6);
+        color: black;
+      }
+
+      .title{
+        color: white;
+      }
+      .list-group-item{
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+      body .ui-autocomplete{
+        color: #333;
+        background: #f7f5f0;
+        border-radius: 5px;
+        z-index: 999999;
+      }
+    .ui-state-active,
+    .ui-widget-content .ui-state-active,
+    .ui-widget-header .ui-state-active,
+    a.ui-button:active,
+    .ui-button:active,
+    .ui-button.ui-state-active:hover {
+      border: none;
+      background-color: grey;
+    }
+    /*======*/
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+        <div class="row main_page justify-content-center align-items-center">
+	        <div class="col-10 col-md-5 mx-auto log_in_form p-3">
+              <h3 class="title">Book search</h3>
+	            <form class="p-3">
+		            <div class="form-group row">
+		                <input type="text" name="term" class="form-control col-md-9" id="term" placeholder="Input book title..." required>
+                    <input type="number" name="number_recommendation" class="form-control col-md-1" id="number_recommendation" placeholder="Input number of recomendations..." value=10 required>
+                    <button type="submit" class="btn btn-primary my-auto col-md-2">Submit</button>
+		            </div>
+	            </form>
+             
+	            <div id="book_list">
+              
+	            </div>
+
+	        </div>        
+        </div>
+    </div>
+    
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/popper.min.js') }}"></script>
+    <!-- <script src="{{ url_for('static',filename='core/bootstrap.min.js') }}"></script> -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+      $('#term').autocomplete({
+        source: "{{ url_for('search') }}",
+        minLength: 3,   
+      });
+
+      $(document).on('submit',function(e){
+        e.preventDefault()
+        $('#book_list').empty()
+        var title = $('#term').val();
+        var number = $('#number_recommendation').val();
+        var dataInput = {'title': title, 'number': number};
+        $.ajax({
+          type:'GET',
+          url: '{{ url_for('book_recommendation')}}',
+          datatype: 'json',
+          data: dataInput,
+          success: function(books){
+            text = `<h5 class='title'>Top ${number} recomendations for "${title}" </h5>`;
+            $('#book_list').append(text)
+            var list = '<ul class="list-group list-group-flush">'
+            for (i=0; i< number ; i++){
+              
+              list += '<li class="list-group-item">'+books[i]+'</li>'
+            }
+            list += '</ul>'
+            $('#book_list').append(list)
+            $("#term").val('')
+            $("#number_recommendation").val('10')       
+          }
+        })
+      })
+    })
+ 
+    </script>
+
+  </body>
+</html>
